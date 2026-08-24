@@ -1,0 +1,65 @@
+name: dbt CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  compile-and-check:
+    runs-on: ubuntu-latest
+
+    # 1. GitHub sunucusunda geçici bir PostgreSQL başlatıyoruz
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: airflow
+          POSTGRES_PASSWORD: airflow_pass
+          POSTGRES_DB: company_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Kodları Çek (Checkout)
+        uses: actions/checkout@v4
+
+      - name: Python Ortamını Kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: dbt-postgres Yükle
+        run: pip install dbt-postgres
+
+      # 2. GitHub Action'ın bu geçici veritabanına bağlanması için dinamik profil
+      - name: CI/CD için Geçici profiles.yml Oluştur
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          my_dwh_project:
+            target: ci
+            outputs:
+              ci:
+                type: postgres
+                host: localhost
+                user: airflow
+                password: airflow_pass
+                port: 5432
+                dbname: company_db
+                schema: public
+                threads: 1
+          EOF
+
+      - name: dbt Bağımlılıklarını Yükle
+        run: dbt deps
+
+      # 3. KOD KONTROLÜ: SQL'leri çalıştırılabilir mi diye derle!
+      - name: SQL Kodlarını Derle (Compile)
+        run: dbt compile
