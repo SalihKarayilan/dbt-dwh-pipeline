@@ -58,8 +58,8 @@ jobs:
           EOF
 
       - name: dbt Bağımlılıklarını Yükle
-        run: dbt deps
+        run: dbt deps --profiles-dir ~/.dbt
 
       # 3. KOD KONTROLÜ: SQL'leri çalıştırılabilir mi diye derle!
       - name: SQL Kodlarını Derle (Compile)
-        run: dbt compile
+        run: dbt compile --profiles-dir ~/.dbt
