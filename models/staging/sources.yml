@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: ham_kaynak
+    database: dwh_db
+    schema: public
+    tables:
+      - name: stg_musteri
+      - name: stg_islem
