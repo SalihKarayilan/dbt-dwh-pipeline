@@ -1,0 +1,12 @@
+my_dwh_project:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: host.docker.internal
+      user: 'salih_karayilan'
+      password: 'salih488'
+      port: 5432
+      dbname: dwh_db
+      schema: public
+      threads: 4

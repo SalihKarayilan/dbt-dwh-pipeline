@@ -15,10 +15,11 @@ final_fct AS (
         i.islem_id,
         i.musteri_id,
         i.islem_tarihi,
+        -- Makromuzu çağırıyoruz ve ona i.islem_tarihi kolonunu gönderiyoruz
+        {{ tarih_boyutu_olustur('i.islem_tarihi') }},
         i.islem_tipi,
         i.islem_tutari
     FROM islemler i
-    -- Sadece sistemde kayıtlı, geçerli müşterilerin işlemlerini Fact tablosuna alıyoruz (Referential Integrity)
     INNER JOIN musteriler m ON i.musteri_id = m.musteri_id
 )
 
