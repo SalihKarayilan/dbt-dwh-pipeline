@@ -1,4 +1,4 @@
-# My DWH Project
+# DWH Project
 
 Bu proje, bir veri ambarı (Data Warehouse) dbt (data build tool) projesidir. Veritabanındaki ham verileri (staging) alır, dönüştürür ve raporlama ile analitik amaçlar için iş modellerine (marts) dönüştürür.
 
